@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">Popular Movies</string>
+    <string name="favourite_activity_label">My Favourites</string>
+
+    <string name="movie_poster_image_description">Movie Thumbnail</string>
+    <string name="movie_trailer_image_description">Movie Trailer</string>
+
+    <string name="connection_error_message">Failed to connect. Check internet connection</string>
+    <string name="detail_error_message">Getting movie details failed</string>
+    <string name="trailer_error_message">Getting trailers failed</string>
+
+    <string name="movie_extra_id" translatable="false">movie_extra_id</string>
+    <string name="fav_extra_id" translatable="false">fav_extra_id</string>
+    <string name="extra_movie" translatable="false">extra_movie</string>
+    <string name="extra_favourite_movie" translatable="false">extra_favourite_movie</string>
+
+    <string name="sort_by_most_popular">Sort By Most Popular</string>
+    <string name="sort_by_most_rated">Sort By Most Rated</string>
+    <string name="trailer">Trailers</string>
+    <string name="review">Reviews</string>
+    <string name="action_share">Share</string>
+
+    <string name="add_favourite_error">Movie could not be added to Favourites. Try again later</string>
+    <string name="added_favourite">Added to Favourites</string>
+    <string name="removed_favourites">Removed from Favourites</string>
+    <string name="view_favourites">View Favourite Movies</string>
+
+</resources>
