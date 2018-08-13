@@ -8,11 +8,15 @@
     <string name="connection_error_message">Failed to connect. Check internet connection</string>
     <string name="detail_error_message">Getting movie details failed</string>
     <string name="trailer_error_message">Getting trailers failed</string>
+    <string name="error_401">Invalid API key. Please use a valid API key</string>
+    <string name="error_404">Requested resource could not be found</string>
 
-    <string name="movie_extra_id" translatable="false">movie_extra_id</string>
-    <string name="fav_extra_id" translatable="false">fav_extra_id</string>
-    <string name="extra_movie" translatable="false">extra_movie</string>
-    <string name="extra_favourite_movie" translatable="false">extra_favourite_movie</string>
+    <string name="movie_extra_id" translatable="false">MOVIE_EXTRA_ID</string>
+    <string name="fav_extra_id" translatable="false">FAV_EXTRA_ID</string>
+    <string name="extra_movie" translatable="false">EXTRA_MOVIE</string>
+    <string name="extra_favourite_movie" translatable="false">EXTRA_FAVOURITE_MOVIE</string>
+    <string name="recycler_view_state_key" translatable="false">RECYCLER_VIEW_STATE_KEY</string>
+    <string name="is_popular_state_key" translatable="false">IS_POPULAR_STATE_KEY</string>
 
     <string name="sort_by_most_popular">Sort By Most Popular</string>
     <string name="sort_by_most_rated">Sort By Most Rated</string>

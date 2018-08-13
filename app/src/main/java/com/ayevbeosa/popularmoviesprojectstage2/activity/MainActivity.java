@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -52,18 +53,23 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
     private WebService webService;
     private boolean isPopular = true;
     private int currentPage = 1;
+    private Parcelable recyclerViewState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if (savedInstanceState != null) {
+            isPopular = savedInstanceState.getBoolean(getString(R.string.is_popular_state_key));
+        }
+
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
+        webService = ApiClient.getRetrofit().create(WebService.class);
         loadProgressBar(true);
         setupViewModels();
 
-        webService = ApiClient.getRetrofit().create(WebService.class);
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -73,6 +79,29 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
                 setupViewModels();
             }
         });
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        recyclerViewState = mLayoutManager.onSaveInstanceState();
+        outState.putParcelable(getString(R.string.recycler_view_state_key), recyclerViewState);
+        outState.putBoolean(getString(R.string.is_popular_state_key), isPopular);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        recyclerViewState = savedInstanceState.getParcelable(getString(R.string.recycler_view_state_key));
+        isPopular = savedInstanceState.getBoolean(getString(R.string.is_popular_state_key));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (recyclerViewState != null) {
+            mLayoutManager.onRestoreInstanceState(recyclerViewState);
+        }
     }
 
     @Override
@@ -86,6 +115,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
         switch (item.getItemId()) {
             case R.id.sort_by_popular_action:
                 loadPopularMovies();
+                isPopular = true;
                 return true;
             case R.id.sort_by_rated_action:
                 loadTopRatedMovies();
@@ -163,12 +193,27 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
                 swipeRefreshLayout.setRefreshing(false);
                 loadProgressBar(false);
                 if (movieResponse != null) {
-                    List<Movie> movies = getMovieResponse(movieResponse);
-                    populateUI();
-                    mAdapter.setMovieList(movies);
+                    if (movieResponse.isSuccessful()) {
+                        List<Movie> movies = getMovieResponse(movieResponse);
+                        if (movies != null) {
+                            populateUI();
+                            mAdapter.setMovieList(movies);
+                            if (recyclerViewState != null) {
+                                mLayoutManager.onRestoreInstanceState(recyclerViewState);
+                            }
+                        }
+                    } else {
+                        switch (movieResponse.code()) {
+                            case 401:
+                                makeToast(getString(R.string.error_401));
+                                break;
+                            case 404:
+                                makeToast(getString(R.string.error_404));
+                                break;
+                        }
+                    }
                 } else {
-                    Toast.makeText(MainActivity.this, getString(R.string.connection_error_message), Toast.LENGTH_SHORT)
-                            .show();
+                    makeToast(getString(R.string.connection_error_message));
                 }
             }
         });
@@ -183,12 +228,29 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
                 swipeRefreshLayout.setRefreshing(false);
                 loadProgressBar(false);
                 if (movieResponse != null) {
-                    List<Movie> movies = getMovieResponse(movieResponse);
-                    populateUI();
-                    mAdapter.setMovieList(movies);
+                    if (movieResponse.isSuccessful()) {
+                        List<Movie> movies = getMovieResponse(movieResponse);
+                        if (movies != null) {
+                            populateUI();
+                            mAdapter.setMovieList(movies);
+                            if (recyclerViewState != null) {
+                                mLayoutManager.onRestoreInstanceState(recyclerViewState);
+                            }
+                        }
+                    } else {
+                        switch (movieResponse.code()) {
+                            case 401:
+                                makeToast(getString(R.string.error_401));
+                                break;
+                            case 404:
+                                makeToast(getString(R.string.error_404));
+                                break;
+                            default:
+                                makeToast(getString(R.string.connection_error_message));
+                        }
+                    }
                 } else {
-                    Toast.makeText(MainActivity.this, getString(R.string.connection_error_message), Toast.LENGTH_SHORT)
-                            .show();
+                    makeToast(getString(R.string.connection_error_message));
                 }
             }
         });
@@ -210,10 +272,10 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
         call.enqueue(new Callback<MovieResponse>() {
             @Override
             public void onResponse(@NonNull Call<MovieResponse> call, @NonNull Response<MovieResponse> response) {
+                loadProgressBar(false);
+                swipeRefreshLayout.setRefreshing(false);
                 List<Movie> movies = getMovieResponse(response);
                 if (movies != null) {
-                    loadProgressBar(false);
-                    swipeRefreshLayout.setRefreshing(false);
                     mAdapter.setMovieList(movies);
                 }
             }
@@ -222,8 +284,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
             public void onFailure(@NonNull Call<MovieResponse> call, @NonNull Throwable t) {
                 loadProgressBar(false);
                 swipeRefreshLayout.setRefreshing(false);
-                Toast.makeText(MainActivity.this, getString(R.string.connection_error_message), Toast.LENGTH_SHORT)
-                        .show();
+                makeToast(getString(R.string.connection_error_message));
             }
         });
     }
@@ -234,5 +295,10 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
         } else {
             progressBar.setVisibility(View.GONE);
         }
+    }
+
+    private void makeToast(String text) {
+        Toast toast = Toast.makeText(this, text, Toast.LENGTH_SHORT);
+        toast.show();
     }
 }
