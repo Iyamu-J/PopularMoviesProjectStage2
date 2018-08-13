@@ -134,8 +134,13 @@ public class DetailsActivity extends AppCompatActivity {
                     addFavouritesToDatabase();
                     isFav = true;
                 }
+                return true;
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
 
     public void populateUI(Bundle extras) {

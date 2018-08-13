@@ -24,7 +24,8 @@
         <activity android:name=".activity.FavouritesActivity"
             android:parentActivityName=".activity.MainActivity">
         </activity>
-        <activity android:name=".activity.DetailsActivity"/>
+        <activity android:name=".activity.DetailsActivity"
+            android:parentActivityName=".activity.MainActivity"/>
     </application>
 
 </manifest>
