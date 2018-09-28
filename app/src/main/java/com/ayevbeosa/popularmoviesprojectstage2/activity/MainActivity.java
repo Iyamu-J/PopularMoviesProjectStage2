@@ -3,6 +3,8 @@ package com.ayevbeosa.popularmoviesprojectstage2.activity;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
@@ -74,7 +76,9 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                mAdapter.emptyMovieList();
+                if (mAdapter != null) {
+                    mAdapter.emptyMovieList();
+                }
                 currentPage = 1;
                 setupViewModels();
             }
@@ -84,9 +88,11 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        recyclerViewState = mLayoutManager.onSaveInstanceState();
-        outState.putParcelable(getString(R.string.recycler_view_state_key), recyclerViewState);
-        outState.putBoolean(getString(R.string.is_popular_state_key), isPopular);
+        if (mLayoutManager != null) {
+            recyclerViewState = mLayoutManager.onSaveInstanceState();
+            outState.putParcelable(getString(R.string.recycler_view_state_key), recyclerViewState);
+            outState.putBoolean(getString(R.string.is_popular_state_key), isPopular);
+        }
     }
 
     @Override
@@ -139,6 +145,15 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
         startActivity(intent);
     }
 
+    private boolean isConnected() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = null;
+        if (connectivityManager != null) {
+            networkInfo = connectivityManager.getActiveNetworkInfo();
+        }
+        return networkInfo != null && networkInfo.isConnectedOrConnecting();
+    }
+
     private void populateUI() {
         mAdapter = new MoviesAdapter(this, this);
         recyclerView.setHasFixedSize(true);
@@ -177,10 +192,16 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
 
     private void setupViewModels() {
         loadProgressBar(true);
-        if (!isPopular) {
-            loadTopRatedMovies();
+        if (isConnected()) {
+            if (!isPopular) {
+                loadTopRatedMovies();
+            } else {
+                loadPopularMovies();
+            }
         } else {
-            loadPopularMovies();
+            loadProgressBar(false);
+            swipeRefreshLayout.setRefreshing(false);
+            makeToast(getString(R.string.connection_error_message));
         }
     }
 
@@ -298,7 +319,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
     }
 
     private void makeToast(String text) {
-        Toast toast = Toast.makeText(this, text, Toast.LENGTH_SHORT);
+        Toast toast = Toast.makeText(this, text, Toast.LENGTH_LONG);
         toast.show();
     }
 }

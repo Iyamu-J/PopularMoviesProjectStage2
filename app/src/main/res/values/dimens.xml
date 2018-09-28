@@ -1,1 +1,29 @@
-<resources></resources>
+<resources>
+    <dimen name="divider_layout_margin">5dp</dimen>
+    <dimen name="divider_layout_height">2dp</dimen>
+    <dimen name="text_view_layout_margin">2dp</dimen>
+    <dimen name="text_view_padding">2dp</dimen>
+    <dimen name="image_view_padding">2dp</dimen>
+    <dimen name="image_view_margin">2dp</dimen>
+    <dimen name="image_view_layout_height">200dp</dimen>
+    <dimen name="image_view_layout_width">185dp</dimen>
+    <dimen name="linear_layout_margin_bottom">4dp</dimen>
+
+    <dimen name="fav_item_image_view_layout_height">100dp</dimen>
+    <dimen name="fav_item_image_view_layout_margin">6dp</dimen>
+    <dimen name="fav_item_text_view_layout_margin_top_bottom">6dp</dimen>
+    <dimen name="fav_item_text_view_layout_margin_left_right">8dp</dimen>
+    <dimen name="card_view_corner_radius">5dp</dimen>
+
+    <dimen name="trailer_item_image_view_layout_margin">2dp</dimen>
+    <dimen name="trailer_item_text_view_layout_margin">2dp</dimen>
+    <dimen name="trailer_item_text_view_drawable_padding">2dp</dimen>
+    <dimen name="trailer_item_card_view_layout_height">200dp</dimen>
+    <dimen name="trailer_item_card_view_corner_radius">3dp</dimen>
+    <dimen name="trailer_item_linear_layout_height">230dp</dimen>
+
+    <dimen name="item_list_image_view_layout_height">100dp</dimen>
+    <dimen name="item_list_image_view_layout_margin">6dp</dimen>
+    <dimen name="item_list_text_view_layout_margin_top_bottom">6dp</dimen>
+    <dimen name="item_list_text_view_layout_margin_left_right">8dp</dimen>
+</resources>
